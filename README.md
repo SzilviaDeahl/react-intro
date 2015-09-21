@@ -11,10 +11,13 @@ This step will guide you in writing a React Application.
 
 ## Objectives
 
-* Create an application with React.
+* Create a list application with React.
+* Plan out an application using React's planning guidelines.
 * Write JSX code.
-* Write a React component.
+* Write React components.
+* Next React components within eachother.
 * Pass properties from a parent component to a child component.
+* Fire an event on a React component.
 
 ## Resources
 
@@ -24,29 +27,255 @@ This step will guide you in writing a React Application.
 * [React Component](https://facebook.github.io/react/docs/component-api.html)
 * [React Component Lifecycle](https://facebook.github.io/react/docs/component-specs.html)
 
-## Setup Atom
+## Setup
+
+### Atom Editor
 
 Install the [language-javascript-jsx](https://atom.io/packages/language-javascript-jsx) package in Atom.
 Now you can view your JSX code with proper highlighting. :sunglasses:
+
+### Chrome
+
+Install the [React Chrome Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension in Chrome.
+Now when you open the Chrome Dev Tools you will see a React tab with lots of good
+	debugging information.
+
+More info [on the React blog](https://facebook.github.io/react/blog/2014/01/02/react-chrome-developer-tools.html).
 
 ## Write a React Application
 
 We will be writing a list tracking application.
 
+Functionality:
+* List title
+* Display a list of items
+* Add new items to the list
+* Edit items in the list
+* Delete items from the list
+
 ### Planning
 
 Basic steps of planning a React application:
-1. Break it down into components.
+1. Break it down into components. A mock of the application can help.
 2. Write the components and render them with static data.
 3. Identify which components need which data.
 4. Store your state outside the components.
 5. Provide a way for components to change state.
 
+### Break it Down
+
+Create a very simple, non-functioning, static, unstyled representation of
+	your app in HTML.
+From this mock, you should be able to draw many conclusions about how it
+	would be broken down into components.
+
+[HTML Mock](application/app-00/mock.html)
+
+From this mock we can visually start to see the component hierarchy needed.
+
+* `<ListApplication>` (top-level root component)
+	* `<ListTitle>`
+	* `<ListCreateItem>`
+	* `<ListItems>`
+		* `<ListItem>`
+
+### Create Sample Data for the Application
+
+We should be able to mock the data with a simple JavaScript object.
+Make sure you consider what the minimal data needed is.
+
+You can use this as a place to start in
+`data.js`:
+```js
+var data = {
+
+}
+```
+
+[Sample Mock Data](application/app-00/data.js)
+
+### Run an HTTP server
+
+In order for the JSXTransformer to work, we'll need to serve our files over HTTP.
+Simply running the HTML file from `file://` will not work because of
+	[CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)
+
+A really easy way to run a static HTTP server is to install
+	[http-server](https://www.npmjs.com/package/http-server).
+Just install it globally with `npm install -g http-server`.
+Then to run the HTTP server, go into a directory and run `http-server`.
+Now load the page by going to http://localhost:8080/
+
 ### Write the Top-Level Component
 
-### Write a Child Component
+*Your code should be similar to [app-00](application/app-00) at this point*
+
+This is the component that starts the whole application.
+A lot of times this is also the component that handles fetching data.
+From here all data is passed down to child components.
+
+In our case the top-level component is `<list-application>`.
+
+First setup an `index.html` to provide an entry-point for the application:
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>My Favorite Colors</title>
+		<!-- React Library -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+		<!-- React JSX Transformer Library -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+	</head>
+	<body>
+		<div id="listApplication"></div>
+		<script src="data.js"></script>
+		<script type="text/jsx" src="listApplication.jsx"></script>
+	</body>
+</html>
+```
+
+We will write the component for `<list-application>` in `listApplication.jsx`:
+```js
+var ListApplication = React.createClass({
+	render: function () {
+		return (
+			<div>List Application</div>
+		)
+	}
+});
+
+React.render(<ListApplication/>, document.getElementById('listApplication'));
+```
+
+Try opening up `index.html` and see what the output looks like.
+
+Now that we have an entry-point, we can extend `<listApplication>` with more components.
+
+### Write Other Components
+
+*Your code should be similar to [app-01](application/app-01) at this point*
+
+Write the other components:
+* `<ListTitle>`
+* `<ListCreateItem>`
+* `<ListItems>`
+	* `<ListItem>`
+
+#### `<listTitle>`
+
+The simplest one is `<listTitle>`:
+```js
+var ListTitle = React.createClass({
+	render: function () {
+		return (
+			<h1>{this.props.title}</h1>
+		);
+	}
+});
+```
+We are specifying that the **text** displayed in our `<ListTitle>` component
+	comes from a prop specified by the parent component.
+
+Then for `<listApplication>`, add it to the render function:
+```js
+var ListApplication = React.createClass({
+	render: function () {
+		return (
+			<div>
+				<ListTitle title={this.props.title}></ListTitle>
+			</div>
+		);
+	}
+});
+
+React.render(<ListApplication title={data.title}/>, document.getElementById('listApplication'));
+```
+
+Also notice in the last `React.render` line some props were added.
+JSX will automatically pull `data` from the JS scope and apply them as props.
+
+#### `<ListItems>` & `<ListItem>`
+
+This component will keep track of `data.items` and display a list of them.
+
+```js
+var ListItem = React.createClass({
+	render: function () {
+		return (
+			<div>
+				<span>{this.props.text}</span>
+				<button>Edit</button>
+				<button>Delete</button>
+			</div>
+		)
+	}
+})
+
+var ListItems = React.createClass({
+	render: function () {
+		var items = this.props.items.map(function (item) {
+			return <li><ListItem text={item.text} /></li>;
+		});
+		return (
+			<ul>
+				{items}
+			</ul>
+		);
+	}
+});
+```
+
+```js
+var ListApplication = React.createClass({
+	render: function () {
+		return (
+			<div>
+				<ListTitle title={this.props.title}></ListTitle>
+				<ListItems items={this.props.items}></ListItems>
+			</div>
+		);
+	}
+});
+
+React.render(<ListApplication items={data.items} title={data.title}/>, document.getElementById('listApplication'));
+```
+
+#### `<ListCreateItem>`
+
+```js
+var ListCreateItem = React.createClass({
+	render: function () {
+		return (
+			<div>
+				<input placeholder="new item text" /><button>Create</button>
+			</div>
+		);
+	}
+});
+```
+
+```js
+var ListApplication = React.createClass({
+	render: function () {
+		return (
+			<div>
+				<ListTitle title={this.props.title}></ListTitle>
+				<ListCreateItem />
+				<ListItems items={this.props.items}></ListItems>
+			</div>
+		);
+	}
+});
+```
 
 ### Wire up an Event
+
+*Your code should be similar to [app-02](application/app-02) at this point*
+
+### Finished Application
+
+View [app-03](application/app-03) to see the finished application.
 
 ## Next Step
 
