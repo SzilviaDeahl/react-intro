@@ -9,8 +9,9 @@ This step gives an overview of React.
 
 ## Objectives
 
+* Discuss the benefits of JSX.
+* Discuss what a React component is.
 * Discuss why the virtual DOM gives React an advantage.
-* Discuss why a unidirectional data flow can benefit development.
 
 ## Resources
 
