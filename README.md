@@ -15,7 +15,7 @@ This step will guide you in writing a React Application.
 * Plan out an application using React's planning guidelines.
 * Write JSX code.
 * Write React components.
-* Next React components within eachother.
+* Nest React components within eachother.
 * Pass properties from a parent component to a child component.
 * Fire an event on a React component.
 
@@ -307,7 +307,7 @@ Make sure that when each of these actions are called,
 
 See [data](application/app-03/data.js) for an example.
 
-Next convert te top-level component from a props based one to a state based one.
+Next convert the top-level component from a props based one to a state based one.
 ```js
 var ListApplication = React.createClass({
 	getInitialState: function() {
