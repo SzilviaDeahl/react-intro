@@ -1,5 +1,7 @@
 # An Intro to React
 
+**Step 1/2**
+
 **This is the first step of the series.**
 **To view other steps, please check out another branch.**
 
