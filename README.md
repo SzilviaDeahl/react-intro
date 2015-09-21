@@ -47,10 +47,9 @@ More info [on the React blog](https://facebook.github.io/react/blog/2014/01/02/r
 We will be writing a list tracking application.
 
 Functionality:
-* List title
+* Title
 * Display a list of items
 * Add new items to the list
-* Edit items in the list
 * Delete items from the list
 
 ### Planning
@@ -204,18 +203,17 @@ var ListItem = React.createClass({
 	render: function () {
 		return (
 			<div>
-				<span>{this.props.text}</span>
-				<button>Edit</button>
+				<span>{this.props.item.text}</span>
 				<button>Delete</button>
 			</div>
 		)
 	}
-})
+});
 
 var ListItems = React.createClass({
 	render: function () {
 		var items = this.props.items.map(function (item) {
-			return <li><ListItem text={item.text} /></li>;
+			return <li><ListItem item={item} /></li>;
 		});
 		return (
 			<ul>
@@ -269,9 +267,116 @@ var ListApplication = React.createClass({
 });
 ```
 
-### Wire up an Event
+*Currently is non-functional.*
+
+### Wire up Events
 
 *Your code should be similar to [app-02](application/app-02) at this point*
+
+First include an eventEmitter library in your `index.html`:
+```html
+...
+<head>
+	<title>My Favorite Colors</title>
+	<!-- React Library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+	<!-- React JSX Transformer Library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+	<!-- EventEmitter Library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/4.2.11/EventEmitter.min.js"></script>
+</head>
+...
+```
+[EventEmitter.js](https://github.com/Olical/EventEmitter)
+	is a straightforward event emitter library for browsers.
+
+Next create some functions around the data called *actions*.
+If a child makes an *action* call to change the data, the parent will be notified
+	so it can rerender.
+We do this with an event emitter.
+
+Create an `actions` object that provides functions to:
+* Get data
+* Create an item
+* Delete an item
+
+Make sure that when each of these actions are called,
+	an event is fired to notify anyone listening of changes.
+
+See [data](application/app-03/data.js) for an example.
+
+Next convert te top-level component from a props based one to a state based one.
+```js
+var ListApplication = React.createClass({
+	getInitialState: function() {
+		return actions.getData();
+	},
+	_onChange: function () {
+		this.setState(actions.getData());
+	},
+	componentDidMount: function () {
+		emitter.addListener('change', this._onChange);
+	},
+	componentWillUnmount: function() {
+		emitter.removeListener('change', this._onChange);
+	},
+	render: function () {
+		return (
+			<div>
+				<ListTitle title={this.state.title}></ListTitle>
+				<ListCreateItem />
+				<ListItems items={this.state.items}></ListItems>
+			</div>
+		);
+	}
+});
+
+React.render(<ListApplication />, document.getElementById('listApplication'));
+```
+
+A lot has changed here.
+An event is registered to listen for changes and grabs the new state
+	whenver it changes.
+`this.props` was changed to `this.state` to reflect it is a state and not a
+	passed in prop anymore.
+It calls `actions.getData()` to populate its state.
+
+To create a new event, hook up a method in the `<ListCreateItem>` component
+	that calls `actions.createText`.
+```js
+var ListCreateItem = React.createClass({
+	handleCreate: function () {
+		var text = React.findDOMNode(this.refs.text);
+		actions.createItem(text.value.trim());
+		text.value = '';
+	},
+	render: function () {
+		return (
+			<div>
+				<input placeholder="new item text" ref="text" />
+				<button onClick={this.handleCreate}>Create</button>
+			</div>
+		);
+	}
+});
+```
+
+And last, hook up the delete buttons to remove an item:
+```js
+var ListItem = React.createClass({
+	handleDelete: function () {
+		actions.deleteItem(this.props.item.id);
+	},
+	render: function () {
+		return (
+			<div>
+				<span>{this.props.item.text}</span>
+				<button onClick={this.handleDelete}>Delete</button>
+			</div>
+		)
+	}
+});
+```
 
 ### Finished Application
 

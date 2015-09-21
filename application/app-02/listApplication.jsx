@@ -10,18 +10,17 @@ var ListItem = React.createClass({
 	render: function () {
 		return (
 			<div>
-				<span>{this.props.text}</span>
-				<button>Edit</button>
+				<span>{this.props.item.text}</span>
 				<button>Delete</button>
 			</div>
 		)
 	}
-})
+});
 
 var ListItems = React.createClass({
 	render: function () {
 		var items = this.props.items.map(function (item) {
-			return <li><ListItem text={item.text} /></li>;
+			return <li><ListItem item={item} /></li>;
 		});
 		return (
 			<ul>
