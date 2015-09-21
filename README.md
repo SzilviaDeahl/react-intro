@@ -95,9 +95,18 @@ A component is any individual piece of functionality in your UI.
 Components allow for reusability, easier testing, and encapsulation.
 
 Examples of components:
-* `<shopping-cart products={this.state.products}></shopping-cart>`
+* `<shopping-cart products={this.state.chosenProducts}></shopping-cart>`
 * `<profile name={this.state.name} pic={this.state.picture}></profile>`
-* `<side-bar choices={this.state.pages}></side-bar>`
+* `<side-bar links={this.state.links}></side-bar>`
+
+Data flows through a React app via **props** on the components.
+
+For example:
+```js
+<side-bar links={this.state.links}></side-bar>
+```
+`<side-bar>` has a prop named `links` that takes an array of links.
+Any parent component using `<side-bar>` can pass in data for that prop.
 
 ### What is the Virtual DOM?
 
