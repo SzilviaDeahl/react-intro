@@ -114,6 +114,6 @@ Or it can be rendered on a phone using something like [React Native](https://fac
 ## Next Step
 
 This concludes the overview of React.
-Checkout the next branch, `step-01`, to continue.
+Checkout the next branch, [step-01](https://github.com/gSchool/react-intro/tree/step-01), to continue.
 
 In the next step we will build a simple React application.
