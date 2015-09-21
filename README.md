@@ -53,3 +53,8 @@ Basic steps of planning a React application:
 This concludes the Writing a React Application step.
 
 This is the last step in this series.
+
+If you would like to continue, consider one of these as your next step:
+* Write an inbox application
+* Research the Flux data pattern
+* Compare an application written in React to a similar one written in Angular
