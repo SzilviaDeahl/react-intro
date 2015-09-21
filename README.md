@@ -3,7 +3,7 @@
 **This is the first step of the series.**
 **To view other steps, please check out another branch.**
 
-In this step gives an overview of React.
+This step gives an overview of React.
 
 <img src="http://facebook.github.io/react/img/logo.svg" width="200"/>
 
