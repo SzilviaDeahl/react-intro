@@ -47,6 +47,7 @@ More info [on the React blog](https://facebook.github.io/react/blog/2014/01/02/r
 We will be writing a list tracking application.
 
 Functionality:
+
 * Title
 * Display a list of items
 * Add new items to the list
@@ -55,6 +56,7 @@ Functionality:
 ### Planning
 
 Basic steps of planning a React application:
+
 1. Break it down into components. A mock of the application can help.
 2. Write the components and render them with static data.
 3. Identify which components need which data.
